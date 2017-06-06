@@ -28,7 +28,7 @@ public class PlaceZombie : MonoBehaviour {
 		private void PlaceUnit(Vector3 target)
 		{
 				this.gameObject.AddComponent <MobMovement>();
-				this.gameObject.GetComponent <MobMovement>().SetTarget(target);
+				this.gameObject.GetComponent <MobMovement>().SetTarget(target, 1.0f);
 				Destroy (this);
 		}
 }
