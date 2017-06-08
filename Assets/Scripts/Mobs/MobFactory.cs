@@ -53,17 +53,18 @@ public class MobFactory : MonoBehaviour
 	}
 
 	//TODO add 6 slots of predefined mobs for quick spawning.
-				
+	//TODO bad college code is bad. The mobgroup script and placezombie script should be the same.
 	public void Spawn()
 	{
 		GameObject mobGroup = new GameObject ();
 		mobGroup.name = "Mob Group";
 		mobGroup.AddComponent <PlaceZombie>();
+		mobGroup.GetComponent <PlaceZombie>().Init(speed);
 		mobGroup.transform.parent = mobManager;
 
 		for(int i = 0; i < number; i++) {
 			GameObject newMob = GameObject.Instantiate (zombie) as GameObject;
-			newMob.transform.position += new Vector3 (Random.value * 2, Random.value * 2);
+			newMob.transform.position += new Vector3 (Random.Range(-number/10.0f,number/10.0f), Random.Range(-number/10.0f,number/10.0f));
 			newMob.GetComponent<Zombie>().SetMyStats(health, armor, plague, damage, speed);
 			newMob.transform.parent = mobGroup.transform;
 		}

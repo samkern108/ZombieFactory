@@ -3,23 +3,21 @@ using System.Collections;
 
 public class MobMovement : MonoBehaviour
 {
-	private Vector3 startPos;
-	private Vector3 target;
-	private float startTime;
-	private float speed;
+	private Vector3 startPos, target, moveDir;
+	private float speed = 10;
+	private float step = 0;
 
 	public void SetTarget(Vector3 target, float speed)
 	{
 		this.startPos = transform.position;
 		this.target = target;
-		this.startTime = Time.time;
+		this.moveDir = target - startPos;
 		this.speed = speed;
 	}
 
-	public void Update()
-	{
-		if (target != null) {
-			transform.position = Vector3.Lerp (startPos, target, (Time.time - startTime));
-		}
+	//TODO Mobs should be able to break out of the mobmovement (apply mobmovement as a force to each mob?)
+	//they should be able to be intercepted by scouts, etc.
+	void Update () {
+		transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
 	}
 }
