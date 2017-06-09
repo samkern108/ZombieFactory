@@ -7,11 +7,11 @@ public class ResourceLoader : MonoBehaviour {
 	private static string pathToPortraits = "Sprites/Portraits/";
 	private static string sfxPath = "Audio/SFX/";
 	private static string musicPath = "Audio/Music/";
-	private static string pathToGameObjects = "Entities/";
+	private static string pathToPrefabs = "Prefabs/";
 
-	public static GameObject LoadGameObject(string name)
+	public static GameObject LoadPrefab(string name)
 	{
-		return Resources.Load <GameObject>(pathToGameObjects + name);
+		return Resources.Load <GameObject>(pathToPrefabs + name);
 	}
 
 	public static Sprite LoadPortrait(string name)

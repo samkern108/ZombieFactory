@@ -9,6 +9,7 @@ public class Town : MonoBehaviour {
 	private static int population = 10;
 
 	void Start () {
+		villagerPrefab = ResourceLoader.LoadPrefab ("Villager");
 		for (int i = 0; i < population; i++) {
 			BuildVillager ();
 		}
@@ -20,6 +21,10 @@ public class Town : MonoBehaviour {
 
 	private void BuildVillager()
 	{
+		GameObject villager = Instantiate (villagerPrefab);
+		villager.transform.position = transform.position + new Vector3 (Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f), 0);
+
+
 		/*GameObject h = Instantiate (hero);
 		h.transform.position = heroSpawnPoint.transform.position + new Vector3(Mathf.Cos(((float)i/(float)heroes.Length) * (2 * Mathf.PI)), Mathf.Sin(((float)i/(float)heroes.Length) * (2 * Mathf.PI)));
 		EntityStats stats = IOManager.LoadEntityStats (heroes [i]);

@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 
 	private void InitializeStaticObjects()
 	{
-		Direct.directFlag = ResourceLoader.LoadGameObject("DirectFlag");
+		//Direct.directFlag = ResourceLoader.LoadPrefab("DirectFlag");
 	}
 
 	public static void GameOver()

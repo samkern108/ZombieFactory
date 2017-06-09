@@ -13,9 +13,13 @@ public class MobFactory : MonoBehaviour
 	private float plague = 0;
 	private float number = 0;
 
-	public GameObject zombie;
+	private GameObject zombie;
 	public Transform mobManager;
 	public Image preview;
+
+	public void Start() {
+		zombie = ResourceLoader.LoadPrefab ("Mob");
+	}
 	
 	public void SetHealth(float h)
 	{

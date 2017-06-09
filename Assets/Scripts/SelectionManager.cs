@@ -24,7 +24,7 @@ public class SelectionManager : MonoBehaviour {
 
 	public void Start()
 	{
-		selectGlowPrefab = ResourceLoader.LoadGameObject ("SelectGlow");
+		//selectGlowPrefab = ResourceLoader.LoadGameObject ("SelectGlow");
 	}
 
 	public static void ChangeSelected(GameObject clicked) {
