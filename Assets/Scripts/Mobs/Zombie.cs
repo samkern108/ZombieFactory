@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Zombie : MonoBehaviour {
+public class Zombie : Entity {
 
 	private float health;	//low health are skeletons, high health are demon lords
 	private float armor;	//high armor actually have armor, low armor have nothing

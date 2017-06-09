@@ -15,11 +15,12 @@ public abstract class Attack : MonoBehaviour {
 		float radius = stats.range;
 
 		GetComponent <CircleCollider2D>().radius = radius;
+		// ?
 		transform.Find ("AttackRadius").localScale = new Vector2(radius, radius);
 
-		//TODO - this can probably be done upon instantiation of the object
-		if (tag.Contains ("Enemy"))
-			gameObject.layer = LayerMask.NameToLayer ("EnemyAttack");
+		// TODO - this can probably be done upon instantiation of the object
+		// if (tag.Contains ("Enemy"))
+		//	gameObject.layer = LayerMask.NameToLayer ("EnemyAttack");
 	}
 
 	protected virtual void Damage(Health health)
@@ -89,6 +90,7 @@ public abstract class Attack : MonoBehaviour {
 
 	public void SetTarget(GameObject t)
 	{
+		Debug.Log ("Attempting to target:  " + t);
 		target = t;
 		target.GetComponent<Health>().Target (this);
 		//we just need to make 100% sure that we don't ever have two attacking coroutines going at once.
@@ -103,7 +105,6 @@ public abstract class Attack : MonoBehaviour {
 
 	public void ClearTarget()
 	{
-		Debug.Log (this + " Clear Target " + target);
 		target = null;
 		GetComponentInParent<Movement> ().MoveToGoal(false);
 	}

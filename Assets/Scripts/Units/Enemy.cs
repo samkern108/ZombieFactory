@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Enemy : Entity {
 
+	// All of this is left over from my old tower defense, which I stole it from. :)
 	public int enemyNum;
 	public static int enemyAliveCounter = 0;
 	public static int enemyKillCounter = 0;
