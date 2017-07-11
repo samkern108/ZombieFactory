@@ -6,12 +6,12 @@ using System.Text.RegularExpressions;
 
 public class MobFactory : MonoBehaviour 
 {
-	private float health = 0;
+	private float health = 1;
 	private float damage = 0;
-	private float speed = 0;
+	private float speed = 1;
 	private float armor = 0;
 	private float plague = 0;
-	private float number = 0;
+	private float number = 1;
 
 	private GameObject zombie;
 	public Transform mobManager;

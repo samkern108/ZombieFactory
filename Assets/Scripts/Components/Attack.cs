@@ -8,6 +8,7 @@ public abstract class Attack : MonoBehaviour {
 	public AttackStats stats;
 
 	public GameObject target;
+	private MoveOrder attackMoveOrder;
 
 	public void InitializeStats(AttackStats s)
 	{
@@ -15,8 +16,10 @@ public abstract class Attack : MonoBehaviour {
 		float radius = stats.range;
 
 		GetComponent <CircleCollider2D>().radius = radius;
+
+		attackMoveOrder = new MoveOrder ();
 		// ?
-		transform.Find ("AttackRadius").localScale = new Vector2(radius, radius);
+		//transform.Find ("AttackRadius").localScale = new Vector2(radius, radius);
 
 		// TODO - this can probably be done upon instantiation of the object
 		// if (tag.Contains ("Enemy"))
@@ -59,7 +62,7 @@ public abstract class Attack : MonoBehaviour {
 
 		if (target == null) {
 			SetTarget(obj.gameObject);
-			GetComponentInParent <Movement>().StopMoving(false);
+			GetComponentInParent <Movement>().StopMoving();
 		}
 	}
 
@@ -80,7 +83,9 @@ public abstract class Attack : MonoBehaviour {
 			} else {
 				//TODO Here is where aggressive/nonagressive should make the difference
 				//Agressive units should set the attacker as a goal, not a temp target
-				GetComponentInParent<Movement> ().SetTemporaryTargetAndMove (attacker.transform, false);
+				attackMoveOrder.priority = 1.0f;
+				attackMoveOrder.target = attacker.transform;
+				GetComponentInParent<Movement> ().AddMoveOrder(attackMoveOrder);
 			}
 		}
 		else 
@@ -106,7 +111,7 @@ public abstract class Attack : MonoBehaviour {
 	public void ClearTarget()
 	{
 		target = null;
-		GetComponentInParent<Movement> ().MoveToGoal(false);
+		GetComponentInParent<Movement> ().ClearMoveOrder(attackMoveOrder);
 	}
 
 	//TODO - it'd be safer to assign entity id numbers... 

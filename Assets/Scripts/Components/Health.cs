@@ -20,10 +20,10 @@ public class Health : MonoBehaviour {
 		float frac = 510 * (stats.health / stats.maxHealth);
 		float r = Mathf.Clamp(510 - frac, 0, 255)/255;
 		float g = Mathf.Clamp(frac, 0, 255)/255;
-		transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
+		//transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
 
 		//TODO do we want Ceil or floor?
-		occupiedSlots = new bool[(int)Mathf.Ceil(GetComponent<BoxCollider2D>().bounds.size.x/unitSpacing)];
+		occupiedSlots = new bool[(int)Mathf.Ceil(GetComponent<CircleCollider2D>().bounds.size.x/unitSpacing)];
 	}
 
 	/*
@@ -35,6 +35,8 @@ public class Health : MonoBehaviour {
 			return true;
 
 		stats.health -= damage;
+
+		Debug.Log (this.name + "  " + damage + "  " + stats.health);
 
 		GetComponentInChildren <Attack> ().AttackedBy (attacker);
 
@@ -76,7 +78,8 @@ public class Health : MonoBehaviour {
 		float frac = 510 * (stats.health / stats.maxHealth);
 		float r = Mathf.Clamp(510 - frac, 0, 255)/255;
 		float g = Mathf.Clamp(frac, 0, 255)/255;
-		transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
+		// Color a health bar later.
+		//transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
 	}
 
 	public virtual void Revive()
@@ -93,7 +96,7 @@ public class Health : MonoBehaviour {
 		for (int i = 0; i < occupiedSlots.Length; i++) {
 			if (!occupiedSlots [i]) {
 				occupiedSlots [i] = true;
-				BoxCollider2D col = GetComponent<BoxCollider2D>();
+				CircleCollider2D col = GetComponent<CircleCollider2D>();
 				Vector3 pos = col.bounds.center + 
 					new Vector3(Mathf.Cos(((float)i/(float)occupiedSlots.Length) 
 						* (2 * Mathf.PI)), Mathf.Sin(((float)i/(float)occupiedSlots.Length) 

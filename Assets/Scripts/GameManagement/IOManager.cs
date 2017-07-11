@@ -13,18 +13,6 @@ public static class IOManager {
 		pathToDataFolder = Application.dataPath + "/Data/";
 	}
 
-	public static GameState LoadGameState()
-	{
-		string data = ReadFromFile("gamestate");
-		return JsonConvert.DeserializeObject<GameState> (data);
-	}
-
-	public static Level LoadLevel(string level)
-	{
-		string data = ReadFromFile(level);
-		return JsonConvert.DeserializeObject<Level> (data);
-	}
-
 	public static EntityStats LoadEntityStats(string name)
 	{
 		string data = ReadFromFile(name);

@@ -29,6 +29,7 @@ public class PlaceZombie : MonoBehaviour {
 	{
 		this.gameObject.AddComponent <MobMovement>();
 		this.gameObject.GetComponent <MobMovement>().SetTarget(target, speed);
+
 		Destroy (this);
 	}
 }

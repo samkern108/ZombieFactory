@@ -2,20 +2,41 @@
 using System.Collections;
 
 public class Zombie : Entity {
-
-	private float health;	//low health are skeletons, high health are demon lords
-	private float armor;	//high armor actually have armor, low armor have nothing
-	private float plague;	//high plague emit clouds, low plague have nothing
-	private float attack;	//high attack have swords, low attack have nothing
-	private float speed;	//high speed are demon dogs, low speed are missing limbs
-// private float stealth;  //high stealth are ephereal, low stealth groan while moving lol
 	
 	public void SetMyStats(float h, float a, float p, float at, float s)
 	{
-		health = h;
-		armor = a;
-		plague = p;
-		attack = at;
-		speed = s;
+		InitializeEntity (h, a, p, at, s);
+	}
+
+	public void InitializeEntity(float health, float armor, float plague, float attack, float speed)
+	{
+		EntityStats stats = new EntityStats ();
+		stats.name = "Zombie Jim";
+		stats.experienceGiven = 5;
+
+		stats.attackStats = new AttackStats ();
+		stats.attackStats.aggressive = true;
+		stats.attackStats.attackSpeed = 0.2f;
+		stats.attackStats.attackWhileMoving = false;
+		stats.attackStats.damage = attack;
+		stats.attackStats.projectile = false;
+		stats.attackStats.range = 1.0f;
+
+		stats.movementStats = new MovementStats ();
+		stats.movementStats.moveSpeed = speed;
+
+		stats.healthStats = new HealthStats ();
+		stats.healthStats.armor = armor;
+		stats.healthStats.maxHealth = health;
+		stats.healthStats.regenSeconds = 1.0f;
+		stats.healthStats.regenAmount = 2.0f;
+
+		this.stats = stats;
+		InitializeEntity ();
+	}
+
+	public override void InitializeEntity ()
+	{
+		base.InitializeEntity ();
 	}
 }

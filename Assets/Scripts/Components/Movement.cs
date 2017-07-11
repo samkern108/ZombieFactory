@@ -1,5 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+public class MoveOrder
+{
+	public Transform target;
+	// A priority greater than the contester will remain active.
+	// A priority less than the contester will be pushed down the stack.
+	public float priority;
+	// If this move order is something that should be cancelled once it's popped, for example,
+	// if an attack-based move order is overridden, it should not be reinstated.
+	public bool interruptable;
+}
 
 /*
  * How movement works:
@@ -24,94 +36,97 @@ using System.Collections;
 public class Movement : MonoBehaviour
 {
 	public MovementStats stats;
-	public bool directed = false;
+	public bool moving = false;
+	public List<MoveOrder> pendingOrders = new List<MoveOrder>(); 
+	public MoveOrder activeOrder;
 
-	protected Transform goal;
-	public Transform target;
+	// TODO(samkern):
+	// Should probably create a dummy object to test move order popping,
+	// directed movement, etc.
 
 	public void InitializeStats (MovementStats s)
 	{
 		stats = s;
-		goal = transform;
-		target = goal;
 	}
 
 	public void Update ()
 	{
-		if (stats.moving) {
-			if (target == null || target.position == transform.position) {
+		if (moving && activeOrder != null) {
+			if (activeOrder.target == null || activeOrder.target.position == transform.position)
 				DetermineNextTarget ();
-			}
-			transform.position = NextPosition ();
+			transform.position = Move ();
 		}
-	}
-
-	private Vector3 NextPosition ()
-	{
-		if (target == null || transform == null) {
-			Debug.Log (target + " " + transform + " UH OH NULL! " + transform.name + " Stopped moving.");
-			return transform.position;
-		}
-		float dist = .3f * Vector2.Distance (target.position, transform.position);
-		return AvoidCollisions (Vector2.Lerp (transform.position, target.position, 
-			(Time.deltaTime * .3f * stats.moveSpeed) / dist));
 	}
 
 	protected virtual void DetermineNextTarget ()
 	{
-		if (directed) 
-			directed = false;
-
-		if (goal.position != target.position) {
-			target = goal;
-		}
-		else {
-			stats.moving = false;
-			target = transform;
+		if (pendingOrders.Count > 0) {
+			activeOrder = pendingOrders [0];
+			pendingOrders.RemoveAt (0);
+		} else {
+			moving = false;
+			activeOrder = null;
 		}
 	}
 
-	//TODO - how do we want to handle 'z' position?
-	public void SetGoalAndMove (Transform goal, bool direct)
+	public void AddMoveOrder(MoveOrder mo)
 	{
-		if (directed && !direct)
-			return;
-
-		this.goal = goal;
-		MoveToGoal (direct);
+		if (activeOrder != null && mo.priority >= activeOrder.priority) {
+			InsertPendingMoveOrder (activeOrder);
+			activeOrder = mo;
+		} else
+			InsertPendingMoveOrder (mo);
 	}
 
-	public void MoveToGoal (bool direct)
-	{
-		target = goal;
-		stats.moving = true;
-		this.directed = direct;
+	private void InsertPendingMoveOrder(MoveOrder mo) {
+		for (int i = 0; i < pendingOrders.Count; i++)
+			if (pendingOrders [i].priority <= mo.priority)
+				pendingOrders.Insert (i, mo);
 	}
 
-	public void SetTemporaryTargetAndMove(Transform target, bool direct)
+	public void ClearMoveOrder(MoveOrder mo)
 	{
-		if (directed && !direct)
-			return;
-
-		this.target = target;
-		stats.moving = true;
-		this.directed = direct;
+		if (activeOrder == mo)
+			DetermineNextTarget ();
+		else
+			pendingOrders.Remove (mo);
 	}
 
-	public void StopMoving (bool cancelDirect)
+	private Vector3 Move ()
 	{
-		if (directed && cancelDirect || !directed) {
-			stats.moving = false;
-			this.target = transform;
-			directed = false;
-		}
+		return Vector3.MoveTowards(transform.position, activeOrder.target.position, 
+			stats.moveSpeed * Time.deltaTime);
+
+		/*float dist = .3f * Vector2.Distance (orders[0].target.position, transform.position);
+		return AvoidCollisions (Vector2.Lerp (transform.position, target.position, 
+			(Time.deltaTime * .3f * stats.moveSpeed) / dist));*/
 	}
 
-	//NOT WORKING (OBVIOUSLY)
+	public void PauseMovement()
+	{
+		moving = false;
+	}
+
+	public void ResumeMovement()
+	{
+		moving = true;
+	}
+
+	public void StopMoving ()
+	{
+		activeOrder = null;
+		pendingOrders.Clear ();
+	}
+		
+	private RaycastHit2D hit;
 	protected Vector3 AvoidCollisions (Vector3 position)
 	{
-		RaycastHit2D hit = Physics2D.Raycast (transform.position, (position - transform.position).normalized, 5);
-		Debug.DrawRay (transform.position, (position - transform.position));
+		hit = Physics2D.Raycast (transform.position, transform.up, 5);
+		Debug.DrawRay (transform.position, transform.up, Color.red, .2f, false);
+
+		if (hit.collider != null) {
+			
+		}
 
 		return position;
 	}

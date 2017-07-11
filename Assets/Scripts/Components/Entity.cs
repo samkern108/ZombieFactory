@@ -5,13 +5,10 @@ public class Entity : MonoBehaviour {
 
 	public EntityStats stats;
 
-	public virtual void InitializeEntity(EntityStats u)
-	{
-		stats = u;
-
-		GetComponentInChildren <Movement>().InitializeStats(u.movementStats);
-		GetComponentInChildren <Attack>().InitializeStats(u.attackStats);
-		GetComponentInChildren <Health>().InitializeStats(u.healthStats);
+	public virtual void InitializeEntity() {
+		GetComponentInChildren <Movement>().InitializeStats(stats.movementStats);
+		GetComponentInChildren <Attack>().InitializeStats(stats.attackStats);
+		GetComponentInChildren <Health>().InitializeStats(stats.healthStats);
 	}
 
 	public virtual void Die()

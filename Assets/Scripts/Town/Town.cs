@@ -14,23 +14,14 @@ public class Town : MonoBehaviour {
 			BuildVillager ();
 		}
 	}
-	
-	void Update () {
-	
-	}
 
 	private void BuildVillager()
 	{
 		GameObject villager = Instantiate (villagerPrefab);
 		villager.transform.position = transform.position + new Vector3 (Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f), 0);
+		villager.GetComponent <Villager> ().InitializeEntity ();
 
-
-		/*GameObject h = Instantiate (hero);
-		h.transform.position = heroSpawnPoint.transform.position + new Vector3(Mathf.Cos(((float)i/(float)heroes.Length) * (2 * Mathf.PI)), Mathf.Sin(((float)i/(float)heroes.Length) * (2 * Mathf.PI)));
-		EntityStats stats = IOManager.LoadEntityStats (heroes [i]);
-
-		h.name = stats.uid;
-
+		/*
 		GameObject attack; 
 		if(stats.attackStats.projectile)
 			attack = Instantiate (rangedAttack);
@@ -41,6 +32,7 @@ public class Town : MonoBehaviour {
 		attack.transform.position = h.transform.position;
 		attack.transform.parent = h.transform;
 		h.GetComponent<Entity>().InitializeEntity (stats);
-		h.GetComponent<SFX> ().SetSuffixes (stats.sfxNum);*/
+		h.GetComponent<SFX> ().SetSuffixes (stats.sfxNum);
+		*/
 	}
 }

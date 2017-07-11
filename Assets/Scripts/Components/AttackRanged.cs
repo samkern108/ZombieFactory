@@ -16,9 +16,9 @@ public class AttackRanged : Attack {
 		Vector2 fireDirection = (health.transform.position - transform.position).normalized;
 
 
-		Vector3 moveAdjust = (m.stats.moving ? ((m.target.position - m.transform.position).normalized * m.stats.moveSpeed) : Vector3.zero);
+		//Vector3 moveAdjust = (m.moving ? ((m.target.position - m.transform.position).normalized * m.stats.moveSpeed) : Vector3.zero);
 
-		fireDirection = ((m.transform.position + moveAdjust) - transform.position).normalized;
+		fireDirection = ((m.transform.position /*+ moveAdjust*/) - transform.position).normalized;
 
 		//Debug.DrawLine (transform.position, m.transform.position, Color.green, .2f);
 		//Debug.DrawLine (transform.position, moveAdjust, Color.red,.2f);
