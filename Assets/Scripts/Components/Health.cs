@@ -11,6 +11,7 @@ public class Health : MonoBehaviour {
 	private bool[] occupiedSlots;
 
 	protected HealthStats stats;
+	private SpriteRenderer healthBar;
 
 	public void InitializeStats(HealthStats s)
 	{
@@ -20,10 +21,17 @@ public class Health : MonoBehaviour {
 		float frac = 510 * (stats.health / stats.maxHealth);
 		float r = Mathf.Clamp(510 - frac, 0, 255)/255;
 		float g = Mathf.Clamp(frac, 0, 255)/255;
-		//transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
 
 		//TODO do we want Ceil or floor?
 		occupiedSlots = new bool[(int)Mathf.Ceil(GetComponent<CircleCollider2D>().bounds.size.x/unitSpacing)];
+
+		GameObject healthBarGO = Instantiate(ResourceLoader.LoadPrefab ("HealthBar"));
+		healthBarGO.transform.parent = this.transform;
+		Vector3 healthBarPos = this.transform.position;
+		healthBarPos.y -= .1f;
+		healthBarGO.transform.position = healthBarPos;
+		healthBar = healthBarGO.GetComponent <SpriteRenderer>();
+		healthBar.color = new Color (r,g,0);
 	}
 
 	/*
@@ -35,8 +43,6 @@ public class Health : MonoBehaviour {
 			return true;
 
 		stats.health -= damage;
-
-		Debug.Log (this.name + "  " + damage + "  " + stats.health);
 
 		GetComponentInChildren <Attack> ().AttackedBy (attacker);
 
@@ -78,8 +84,7 @@ public class Health : MonoBehaviour {
 		float frac = 510 * (stats.health / stats.maxHealth);
 		float r = Mathf.Clamp(510 - frac, 0, 255)/255;
 		float g = Mathf.Clamp(frac, 0, 255)/255;
-		// Color a health bar later.
-		//transform.Find ("Health").GetComponent <SpriteRenderer>().color = new Color(r, g, 0);
+		healthBar.color = new Color(r, g, 0);
 	}
 
 	public virtual void Revive()
