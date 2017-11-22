@@ -13,7 +13,7 @@ public abstract class Attack : MonoBehaviour {
 
 	private List<GameObject> queuedTargets = new List<GameObject> ();
 
-	private MoveOrder attackMoveOrder;
+	private Movement movement;
 
 	public void InitializeStats(AttackStats s)
 	{
@@ -22,7 +22,7 @@ public abstract class Attack : MonoBehaviour {
 
 		GetComponent <CircleCollider2D>().radius = radius;
 
-		attackMoveOrder = new MoveOrder ();
+		movement = GetComponentInParent <Movement>();
 		// ?
 		//transform.Find ("AttackRadius").localScale = new Vector2(radius, radius);
 
@@ -48,6 +48,7 @@ public abstract class Attack : MonoBehaviour {
 	public void AcquireTarget(GameObject newTarget) {
 		if (!haveTarget) {
 			target = newTarget;
+			movement.SetAttackTarget (new MoveTarget(target.transform, stats.range));
 			haveTarget = true;
 			StartCoroutine ("DamageCoroutine");
 		} else
@@ -58,10 +59,11 @@ public abstract class Attack : MonoBehaviour {
 	{
 		if (queuedTargets.Count == 0) {
 			haveTarget = false;
+			movement.ClearAttackTarget();
 			return false;
 		}
-
 		target = queuedTargets [0];
+		movement.SetAttackTarget (new MoveTarget(target.transform, stats.range));
 		queuedTargets.RemoveAt (0);
 		return true;
 	}
@@ -88,7 +90,7 @@ public abstract class Attack : MonoBehaviour {
 
 	public void AttackedBy(GameObject attacker)
 	{
-		AcquireTarget(attacker);
+		//AcquireTarget(attacker);
 		/*if (target == null) {
 			if (GetComponent<CircleCollider2D> ().OverlapPoint (attacker.transform.position)) {
 				SetTarget (attacker);

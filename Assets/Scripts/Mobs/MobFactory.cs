@@ -70,6 +70,7 @@ public class MobFactory : MonoBehaviour
 			GameObject newMob = GameObject.Instantiate (zombie) as GameObject;
 			newMob.transform.position += new Vector3 (Random.Range(-number/10.0f,number/10.0f), Random.Range(-number/10.0f,number/10.0f));
 			newMob.GetComponent<Zombie>().SetMyStats(health, armor, plague, damage, speed);
+			newMob.GetComponent<Zombie> ().Hibernate (true);
 			newMob.transform.parent = mobGroup.transform;
 		}
 	}

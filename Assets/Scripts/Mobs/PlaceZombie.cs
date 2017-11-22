@@ -7,7 +7,6 @@ public class PlaceZombie : MonoBehaviour {
 	bool placeUnit = false;
 	private float speed;
 
-	// MobMovement and PlaceZombie should be combined
 	public void Init(float speed)
 	{
 		this.speed = speed;
@@ -27,8 +26,12 @@ public class PlaceZombie : MonoBehaviour {
 
 	private void SetTarget(Vector3 target)
 	{
-		this.gameObject.AddComponent <MobMovement>();
-		this.gameObject.GetComponent <MobMovement>().SetTarget(target, speed);
+		Vector3 newTarget;
+		foreach(Zombie z in GetComponentsInChildren<Zombie>()) {
+			newTarget = target + new Vector3 (Random.Range(-.5f, .5f), Random.Range(-.5f, .5f), 0);
+			z.gameObject.GetComponent <Movement>().SetGoalTarget(new MoveTarget(newTarget));
+			z.Hibernate (false);
+		}
 
 		Destroy (this);
 	}

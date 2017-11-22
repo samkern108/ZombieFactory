@@ -17,14 +17,10 @@ public class Direct : MonoBehaviour {
 				clickPos.z = this.transform.position.z;
 				flag.transform.position = clickPos;
 				flag.GetComponent<DirectFlag> ().assignedHero = this.gameObject;
-				MoveOrder moveOrder = new MoveOrder ();
-				moveOrder.priority = .5f;
-				moveOrder.target = flag.transform;
-				GetComponentInParent<Movement> ().AddMoveOrder(moveOrder);
+				GetComponentInParent<Movement> ().SetGoalTarget (new MoveTarget(flag.transform));
 				GetComponent<SFX> ().PlayClip (this.name, sfxlib.move);
-			}
-			else
-				GetComponentInParent<Movement>().StopMoving ();
+			} else
+				GetComponentInParent<Movement> ().PauseMovement (true);
 		}
 	}
 }

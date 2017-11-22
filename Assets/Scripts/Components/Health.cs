@@ -47,8 +47,9 @@ public class Health : MonoBehaviour {
 
 		GetComponentInChildren <Attack> ().AttackedBy (attacker);
 
-		if(stats.regenAmount > 0)
-			StartCoroutine ("Regenerate");
+		// regen is too strong right now :P
+		//if(stats.regenAmount > 0)
+		//	StartCoroutine ("Regenerate");
 
 		if (stats.health <= 0) 
 			Dead ();

@@ -2,47 +2,51 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MoveOrder
+public class MoveTarget
 {
-	public Transform target;
-	// A priority greater than the contester will remain active.
-	// A priority less than the contester will be pushed down the stack.
-	public float priority;
-	// If this move order is something that should be cancelled once it's popped, for example,
-	// if an attack-based move order is overridden, it should not be reinstated.
-	public bool interruptable;
+	public Vector3 targetV;
+	public Transform targetT;
+	private bool vector = false;
+	public float stoppingDistance = 0.0f;
+
+	public MoveTarget(Vector3 target) {
+		this.targetV = target;
+		vector = true;
+	}
+
+	public MoveTarget(Transform target) {
+		this.targetT = target;
+		vector = false;
+	}
+
+	public MoveTarget(Vector3 target, float stoppingDistance) {
+		this.targetV = target;
+		this.stoppingDistance = stoppingDistance;
+		vector = true;
+	}
+
+	public MoveTarget(Transform target, float stoppingDistance) {
+		this.targetT = target;
+		this.stoppingDistance = stoppingDistance;
+		vector = false;
+	}
+
+	public Vector3 GetTargetPosition() {
+		if (vector)
+			return targetV;
+		else
+			return targetT.position;
+	}
 }
 
-/*
- * How movement works:
- * 
- * If a unit is "directed" when they move to their goal, they can't be stopped unless the stop order
- * carries an "interrupt direct" bool.
- * 
- * Directed movement example:
- *  - A hero being moved by the user
- * Interrupt example:
- *  - Knockback damage or something
- * Non-directed movement example:
- * 	- enemy moving to the waypoint
- * Non-direct interrupt example:
- * 	- being attacked by an enemy
- * 
- * The unit, if "stats.moving", will move toward its "target position." This is its short-term goal, such 
- * as attacking an enemy, avoiding an obstacle, or fleeing.
- * The unit will also keep track of its "goal position", which is where the unit should eventually
- * end up, such as the next waypoint (enemies) or a player-issued goal position (heroes).
- */
+// TODO(samkern): if they reach their goal target, remove it. If there is no active target, stop moving.
 public class Movement : MonoBehaviour
 {
 	public MovementStats stats;
 	public bool moving = false;
-	public List<MoveOrder> pendingOrders = new List<MoveOrder>(); 
-	public MoveOrder activeOrder;
 
-	// TODO(samkern):
-	// Should probably create a dummy object to test move order popping,
-	// directed movement, etc.
+	public MoveTarget attackTarget, goalTarget;
+	public bool attackMove = false;
 
 	public void InitializeStats (MovementStats s)
 	{
@@ -51,50 +55,35 @@ public class Movement : MonoBehaviour
 
 	public void Update ()
 	{
-		if (moving && activeOrder != null) {
-			if (activeOrder.target == null || activeOrder.target.position == transform.position)
-				DetermineNextTarget ();
-			transform.position = Move ();
+		if (moving)
+			transform.position = MoveTowardTarget (attackMove ? attackTarget : goalTarget);
+	}
+
+	public void SetGoalTarget(MoveTarget target)
+	{
+		moving = true;
+		goalTarget = target;
+	}
+
+	public void SetAttackTarget(MoveTarget target)
+	{
+		attackTarget = target;
+		attackMove = true;
+	}
+
+	public void ClearAttackTarget()
+	{
+		attackMove = false;
+	}
+
+	private Vector3 MoveTowardTarget (MoveTarget target)
+	{
+		Vector3 stopDistance = new Vector3 ();
+		if (target.stoppingDistance > 0.0f) {
+			stopDistance = (target.GetTargetPosition () - transform.position).normalized * target.stoppingDistance;
 		}
-	}
 
-	protected virtual void DetermineNextTarget ()
-	{
-		if (pendingOrders.Count > 0) {
-			activeOrder = pendingOrders [0];
-			pendingOrders.RemoveAt (0);
-		} else {
-			moving = false;
-			activeOrder = null;
-		}
-	}
-
-	public void AddMoveOrder(MoveOrder mo)
-	{
-		if (activeOrder != null && mo.priority >= activeOrder.priority) {
-			InsertPendingMoveOrder (activeOrder);
-			activeOrder = mo;
-		} else
-			InsertPendingMoveOrder (mo);
-	}
-
-	private void InsertPendingMoveOrder(MoveOrder mo) {
-		for (int i = 0; i < pendingOrders.Count; i++)
-			if (pendingOrders [i].priority <= mo.priority)
-				pendingOrders.Insert (i, mo);
-	}
-
-	public void ClearMoveOrder(MoveOrder mo)
-	{
-		if (activeOrder == mo)
-			DetermineNextTarget ();
-		else
-			pendingOrders.Remove (mo);
-	}
-
-	private Vector3 Move ()
-	{
-		return Vector3.MoveTowards(transform.position, activeOrder.target.position, 
+		return Vector3.MoveTowards(transform.position, target.GetTargetPosition() - stopDistance, 
 			stats.moveSpeed * Time.deltaTime);
 
 		/*float dist = .3f * Vector2.Distance (orders[0].target.position, transform.position);
@@ -102,22 +91,11 @@ public class Movement : MonoBehaviour
 			(Time.deltaTime * .3f * stats.moveSpeed) / dist));*/
 	}
 
-	public void PauseMovement()
+	public void PauseMovement(bool pause)
 	{
-		moving = false;
+		moving = !pause;
 	}
 
-	public void ResumeMovement()
-	{
-		moving = true;
-	}
-
-	public void StopMoving ()
-	{
-		activeOrder = null;
-		pendingOrders.Clear ();
-	}
-		
 	private RaycastHit2D hit;
 	protected Vector3 AvoidCollisions (Vector3 position)
 	{

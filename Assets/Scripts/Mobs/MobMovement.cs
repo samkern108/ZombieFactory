@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO(samkern): Replace this
 public class MobMovement : MonoBehaviour
 {
 	private Vector3 startPos, target, moveDir;
@@ -13,6 +14,10 @@ public class MobMovement : MonoBehaviour
 		this.target = target;
 		this.moveDir = target - startPos;
 		this.speed = speed;
+
+		foreach(Zombie z in GetComponentsInChildren<Zombie>()) {
+			z.Hibernate (false);
+		}
 	}
 
 	//TODO Mobs should be able to break out of the mobmovement (apply mobmovement as a force to each mob?)

@@ -35,6 +35,15 @@ public class Zombie : Entity {
 		InitializeEntity ();
 	}
 
+	public void Hibernate(bool hibernate) {
+		transform.Find ("Attack").gameObject.SetActive (!hibernate);
+		if (hibernate) {
+			gameObject.layer = LayerMask.NameToLayer ("Dormant");
+		} else {
+			gameObject.layer = LayerMask.NameToLayer ("Mob");
+		}
+	}
+
 	public override void InitializeEntity ()
 	{
 		base.InitializeEntity ();
