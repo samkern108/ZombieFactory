@@ -25,7 +25,7 @@ public class MovementStats
 public class AttackStats
 {
 	public float damage { get; set; }
-	public float attackSpeed { get; set; }
+	public float attackDelay { get; set; }
 	public bool aggressive { get; set; }
 	public bool attackWhileMoving { get; set; }
 	public bool projectile { get; set; }

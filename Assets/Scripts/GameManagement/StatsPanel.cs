@@ -33,7 +33,7 @@ public class StatsPanel : MonoBehaviour {
 	{
 		entityName.text = stats.name;
 		damage.text = ""+stats.attackStats.damage;
-		attackSpeed.text = ""+stats.attackStats.attackSpeed;
+		attackSpeed.text = ""+stats.attackStats.attackDelay;
 		health.text = ""+stats.healthStats.health;
 		moveSpeed.text = ""+stats.movementStats.moveSpeed;
 	}

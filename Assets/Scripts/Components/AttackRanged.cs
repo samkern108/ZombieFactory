@@ -5,15 +5,15 @@ public class AttackRanged : Attack {
 
 	public GameObject projectile;
 
-	protected override void Damage(Health health)
+	protected override void Damage()
 	{
-		Movement m = health.GetComponent<Movement>(); //TODO can we just get this ONCE when we target and store it?
+		Movement m = target.GetComponent<Movement>(); //TODO can we just get this ONCE when we target and store it?
 
 		GameObject g = Instantiate (projectile);
 		g.transform.position = transform.position;
 
 		Projectile p = g.GetComponent<Projectile>();
-		Vector2 fireDirection = (health.transform.position - transform.position).normalized;
+		Vector2 fireDirection = (target.transform.position - transform.position).normalized;
 
 
 		//Vector3 moveAdjust = (m.moving ? ((m.target.position - m.transform.position).normalized * m.stats.moveSpeed) : Vector3.zero);

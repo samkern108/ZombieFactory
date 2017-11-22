@@ -28,7 +28,7 @@ public class Health : MonoBehaviour {
 		GameObject healthBarGO = Instantiate(ResourceLoader.LoadPrefab ("HealthBar"));
 		healthBarGO.transform.parent = this.transform;
 		Vector3 healthBarPos = this.transform.position;
-		healthBarPos.y -= .1f;
+		healthBarPos.y -= .32f;
 		healthBarGO.transform.position = healthBarPos;
 		healthBar = healthBarGO.GetComponent <SpriteRenderer>();
 		healthBar.color = new Color (r,g,0);
@@ -39,17 +39,17 @@ public class Health : MonoBehaviour {
 	 */
 	public virtual bool TakeDamage(float damage, GameObject attacker)
 	{
+		Debug.Log (stats.health + "   " + damage);
 		if (stats.dead)
 			return true;
 
 		stats.health -= damage;
+		ColorHealth ();
 
 		GetComponentInChildren <Attack> ().AttackedBy (attacker);
 
-		ColorHealth ();
-
-		if(stats.regenAmount > 0)
-			StartCoroutine ("Regenerate");
+		//if(stats.regenAmount > 0)
+		//	StartCoroutine ("Regenerate");
 
 		if (stats.health <= 0) 
 			Dead ();

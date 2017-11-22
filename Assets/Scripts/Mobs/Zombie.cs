@@ -16,7 +16,7 @@ public class Zombie : Entity {
 
 		stats.attackStats = new AttackStats ();
 		stats.attackStats.aggressive = true;
-		stats.attackStats.attackSpeed = 0.2f;
+		stats.attackStats.attackDelay = 0.5f;
 		stats.attackStats.attackWhileMoving = false;
 		stats.attackStats.damage = attack;
 		stats.attackStats.projectile = false;

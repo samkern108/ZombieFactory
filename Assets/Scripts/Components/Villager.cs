@@ -11,9 +11,9 @@ public class Villager : Entity {
 
 		stats.attackStats = new AttackStats ();
 		stats.attackStats.aggressive = true;
-		stats.attackStats.attackSpeed = 0.2f;
+		stats.attackStats.attackDelay = 1f;
 		stats.attackStats.attackWhileMoving = true;
-		stats.attackStats.damage = 0.5f;
+		stats.attackStats.damage = 0.2f;
 		stats.attackStats.projectile = false;
 		stats.attackStats.range = 1.0f;
 

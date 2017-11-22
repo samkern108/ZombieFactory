@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public abstract class Attack : MonoBehaviour {
 
@@ -8,6 +9,10 @@ public abstract class Attack : MonoBehaviour {
 	public AttackStats stats;
 
 	public GameObject target;
+	protected bool haveTarget = false;
+
+	private List<GameObject> queuedTargets = new List<GameObject> ();
+
 	private MoveOrder attackMoveOrder;
 
 	public void InitializeStats(AttackStats s)
@@ -26,58 +31,67 @@ public abstract class Attack : MonoBehaviour {
 		//	gameObject.layer = LayerMask.NameToLayer ("EnemyAttack");
 	}
 
-	protected virtual void Damage(Health health)
+	protected virtual void Damage()
 	{
-		health.TakeDamage (stats.damage,  this.transform.parent.gameObject);
+		// TODO - Store Health
+		target.GetComponent<Health>().TakeDamage (stats.damage, this.transform.parent.gameObject);
 	}
 
 	public IEnumerator DamageCoroutine()
 	{
-		Health health = target.GetComponentInChildren<Health> ();
-		GameObject myTarget = target; //race condition
-
-
-		while (myTarget == target) {
-			Damage (health);
-			yield return new WaitForSeconds (stats.attackSpeed);
+		while(haveTarget) {
+			Damage ();
+			Debug.Log ("Damage Coroutine");
+			yield return new WaitForSeconds(stats.attackDelay);
 		}
 	}
 
+	public void AcquireTarget(GameObject newTarget) {
+		if (!haveTarget) {
+			target = newTarget;
+			haveTarget = true;
+			Debug.Log ("Starting coroutine");
+			StartCoroutine ("DamageCoroutine");
+		} else
+			queuedTargets.Add (newTarget);
+	}
 
-	/* So how does targeting work?
-		 - if a unit has no target and a collider stays within their range, they target it
-		 - if a unit has no target and is attacked by a viable target, they target it
-		 - if a unit has a target and is attacked by a viable target, they target it if aggressive
-		         otherwise, they keep their current target
-		 - if a unit loses their target, they chase it if aggressive
-		         otherwise, they target the closest unit. If none, they move toward goal
-	*/
-
-	private int position;
-
-	void OnTriggerStay2D(Collider2D obj)
+	private bool Retarget()
 	{
-		if (obj.gameObject == target)
-			return;
-
-		if (target == null) {
-			SetTarget(obj.gameObject);
-			GetComponentInParent <Movement>().StopMoving();
+		if (queuedTargets.Count == 0) {
+			haveTarget = false;
+			return false;
 		}
+
+		target = queuedTargets [0];
+		queuedTargets.RemoveAt (0);
+		return true;
 	}
 
-	//TODO - on setting a target, if this unit is "aggressive", it should also set its
-	// goal position to be the target. This way, upon trigger exit, the unit will chase it.
+	public void TargetDead(GameObject deadTarget)
+	{
+		if (target == deadTarget)
+			Retarget ();
+	}
+		
+	protected void OnTriggerEnter2D(Collider2D obj)
+	{
+		GameObject enemy = obj.gameObject;
+		AcquireTarget (enemy);
+	}
+
 	void OnTriggerExit2D(Collider2D obj)
 	{
-		if (obj.gameObject == target) {
-			UnTarget ();
-		}
+		queuedTargets.Remove (obj.gameObject);
+		if (obj.gameObject == target)
+			target = null;
+		Retarget ();
 	}
 
 	public void AttackedBy(GameObject attacker)
 	{
-		if (target == null) {
+		AcquireTarget(attacker);
+		/*if (target == null) {
 			if (GetComponent<CircleCollider2D> ().OverlapPoint (attacker.transform.position)) {
 				SetTarget (attacker);
 			} else {
@@ -90,42 +104,10 @@ public abstract class Attack : MonoBehaviour {
 		}
 		else 
 			if (target.GetComponentInChildren<Attack> ().target != this.transform.parent.gameObject)
-				SetTarget (attacker);
+				SetTarget (attacker);*/
 	}
 
-	public void SetTarget(GameObject t)
-	{
-		Debug.Log ("Attempting to target:  " + t);
-		target = t;
-		target.GetComponent<Health>().Target (this);
-		//we just need to make 100% sure that we don't ever have two attacking coroutines going at once.
-		StartCoroutine ("DamageCoroutine");	
-	}
-
-	public void UnTarget()
-	{
-		target.GetComponent<Health> ().UnTarget (this);
-		ClearTarget ();
-	}
-
-	public void ClearTarget()
-	{
-		target = null;
-		GetComponentInParent<Movement> ().ClearMoveOrder(attackMoveOrder);
-	}
-
-	//TODO - it'd be safer to assign entity id numbers... 
-	//Called by Health upon death
-	public void TargetDead(GameObject t)
-	{
-		if (target == t) {
-			ClearTarget ();
-			/*Hero h = GetComponentInParent<Hero> ();
-			if(h) 
-				h.GetExperience (t.GetComponent<Enemy>().stats.experienceGiven);*/
-		}
-	}
-
+	// TODO(samkern): These are defunct.
 	public void ShowRadius()
 	{
 		transform.Find ("AttackRadius").gameObject.SetActive(true);

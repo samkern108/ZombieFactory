@@ -3,8 +3,9 @@ using System.Collections;
 
 public class AttackMelee : Attack {
 
-	protected override void Damage(Health health)
+	// TODO(samkern): wait why do I have this
+	protected override void Damage()
 	{
-		base.Damage (health);
+		base.Damage ();
 	}
 }
