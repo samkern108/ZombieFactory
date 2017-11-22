@@ -41,7 +41,6 @@ public abstract class Attack : MonoBehaviour {
 	{
 		while(haveTarget) {
 			Damage ();
-			Debug.Log ("Damage Coroutine");
 			yield return new WaitForSeconds(stats.attackDelay);
 		}
 	}
@@ -50,7 +49,6 @@ public abstract class Attack : MonoBehaviour {
 		if (!haveTarget) {
 			target = newTarget;
 			haveTarget = true;
-			Debug.Log ("Starting coroutine");
 			StartCoroutine ("DamageCoroutine");
 		} else
 			queuedTargets.Add (newTarget);

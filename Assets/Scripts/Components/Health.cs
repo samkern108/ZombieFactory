@@ -39,7 +39,6 @@ public class Health : MonoBehaviour {
 	 */
 	public virtual bool TakeDamage(float damage, GameObject attacker)
 	{
-		Debug.Log (stats.health + "   " + damage);
 		if (stats.dead)
 			return true;
 
@@ -48,8 +47,8 @@ public class Health : MonoBehaviour {
 
 		GetComponentInChildren <Attack> ().AttackedBy (attacker);
 
-		//if(stats.regenAmount > 0)
-		//	StartCoroutine ("Regenerate");
+		if(stats.regenAmount > 0)
+			StartCoroutine ("Regenerate");
 
 		if (stats.health <= 0) 
 			Dead ();
