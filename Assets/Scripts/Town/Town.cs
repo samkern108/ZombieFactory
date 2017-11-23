@@ -6,7 +6,7 @@ public class Town : MonoBehaviour {
 
 	public GameObject villagerPrefab;
 	private static List<Villager> villagers = new List<Villager>();
-	private static int population = 10;
+	private static int population = 20;
 
 	void Start () {
 		villagerPrefab = ResourceLoader.LoadPrefab ("Villager");

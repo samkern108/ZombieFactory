@@ -5,17 +5,16 @@ public class PlaceZombie : MonoBehaviour {
 	
 	Vector3 mousePosition;
 	bool placeUnit = false;
-	private float speed;
-
-	public void Init(float speed)
-	{
-		this.speed = speed;
-	}
 
 	void Update () 
 	{
 		mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		mousePosition.z = 0;
+
+		// TODO(samkern): Just make millCenter a transform so we don't need to manually update it.
+		foreach (Movement m in GetComponentsInChildren<Movement>()) {
+			m.millCenter = mousePosition + new Vector3 (Random.Range(-.5f, .5f), Random.Range(-.5f, .5f), 0);
+		}
 
 		if (!placeUnit) transform.position = mousePosition;
 		if (Input.GetMouseButtonDown (0)) {

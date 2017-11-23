@@ -44,6 +44,7 @@ public class Zombie : Entity {
 		}
 	}
 
+	// TODO(samkern): ??
 	public override void InitializeEntity ()
 	{
 		base.InitializeEntity ();

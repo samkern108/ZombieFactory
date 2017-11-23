@@ -13,6 +13,9 @@ public abstract class Attack : MonoBehaviour {
 
 	private List<GameObject> queuedTargets = new List<GameObject> ();
 
+	private float lastAttackTimestamp;
+	private float retargetTime = 1.0f;
+
 	private Movement movement;
 
 	public void InitializeStats(AttackStats s)
@@ -35,10 +38,17 @@ public abstract class Attack : MonoBehaviour {
 	{
 		// TODO - Store Health
 		target.GetComponent<Health>().TakeDamage (stats.damage, this.transform.parent.gameObject);
+		lastAttackTimestamp = Time.time;
 	}
 
-	public IEnumerator DamageCoroutine()
+	public void StartDamageCoroutine()
 	{
+		StartCoroutine ("DamageCoroutine");
+	}
+
+	private IEnumerator DamageCoroutine()
+	{
+		// 
 		while(haveTarget) {
 			Damage ();
 			yield return new WaitForSeconds(stats.attackDelay);
@@ -50,7 +60,9 @@ public abstract class Attack : MonoBehaviour {
 			target = newTarget;
 			movement.SetAttackTarget (new MoveTarget(target.transform, stats.range));
 			haveTarget = true;
-			StartCoroutine ("DamageCoroutine");
+			// Don't start attacking until a proper amount of time has passed.
+			// TODO(samkern): Ensure this is working
+			Invoke ("StartDamageCoroutine", (retargetTime - (Time.time - lastAttackTimestamp)));
 		} else
 			queuedTargets.Add (newTarget);
 	}
